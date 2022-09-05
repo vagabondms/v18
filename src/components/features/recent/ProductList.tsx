@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { getProducts } from "../../../api/fakeAPI";
 import { Products } from "../../../models/product";
+
 import Card from "../../common/Card";
 
 const Container = styled.ul`
@@ -14,51 +13,45 @@ const Container = styled.ul`
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 `;
 
-const EndOfList = styled.div`
+const ListEnd = styled.div`
   height: 10px;
 `;
 
-const ProductList = () => {
-  const [products, setProducts] = useState<Products[]>([]);
-  const { pathname } = useLocation();
-  const offset = useRef<number>(0);
+const ProductList = ({ resource }: { resource: any }) => {
+  const products = resource.products.read();
 
-  useEffect(() => {
-    offset.current = 0;
-    getProducts({ type: pathname, offset: offset.current }).then((data) => {
-      setProducts(data);
-    });
-  }, [pathname]);
+  const [productList, setProductList] = useState<Products[]>(products);
 
   const endOfList = useRef<HTMLDivElement>(null);
   const io = useRef<IntersectionObserver | null>(null);
-  const ioCallback = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const [element] = entries;
 
-      if (element.isIntersecting) {
-        offset.current = offset.current + 1;
-        getProducts({ type: pathname, offset: offset.current }).then((data) =>
-          setProducts((prev) => [...prev, ...data])
-        );
-      }
-    },
-    [pathname]
-  );
-  useEffect(() => {
-    io.current = new IntersectionObserver(ioCallback);
+  // const ioCallback = useCallback(
+  //   (entries: IntersectionObserverEntry[]) => {
+  //     const [entry] = entries;
 
-    endOfList.current && io.current.observe(endOfList.current);
+  //     if (entry.isIntersecting && entry.time > 1000) {
+  //       offset.current = offset.current + 1;
+  //       getProducts({ type: selected, offset: offset.current }).then((data) =>
+  //         setProducts((prev) => [...prev, ...data])
+  //       );
+  //     }
+  //   },
+  //   [pathname]
+  // );
+  // useEffect(() => {
+  //   io.current = new IntersectionObserver(ioCallback);
 
-    return () => io?.current?.disconnect();
-  }, [ioCallback]);
+  //   endOfList.current && io.current.observe(endOfList.current);
+
+  //   return () => io?.current?.disconnect();
+  // }, [ioCallback]);
 
   return (
     <Container>
-      {products?.map((product) => {
+      {productList?.map((product: any) => {
         return <Card key={product.id} {...product}></Card>;
       })}
-      <EndOfList ref={endOfList} />
+      <ListEnd ref={endOfList} />
     </Container>
   );
 };

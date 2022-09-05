@@ -1,5 +1,5 @@
-import React, { HTMLAttributes, useContext } from "react";
-import { Link, LinkProps } from "react-router-dom";
+import React, { HTMLAttributes, ReactNode, useContext } from "react";
+
 import styled from "styled-components";
 import Button from "../common/Button";
 
@@ -11,15 +11,17 @@ const StyledMenu = styled.ul`
   }
 `;
 
-interface MenuProps extends HTMLAttributes<HTMLUListElement> {
-  selected?: string;
+interface MenuProps extends Omit<HTMLAttributes<HTMLUListElement>, "onChange"> {
+  selected: string | null;
+  onChange(value: string): void;
 }
 
-const Menu = ({ children, selected, ...args }: MenuProps) => {
+const Menu = ({ children, selected, onChange, ...args }: MenuProps) => {
   return (
     <MenuContext.Provider
       value={{
         selected: selected ?? null,
+        onChange: onChange,
       }}
     >
       <StyledMenu {...args}>{children}</StyledMenu>
@@ -27,16 +29,24 @@ const Menu = ({ children, selected, ...args }: MenuProps) => {
   );
 };
 
-interface MenuItemProps extends LinkProps {}
+interface MenuItemProps {
+  children: ReactNode;
+  to: string;
+}
 
 const MenuItem = ({ children, to, ...args }: MenuItemProps) => {
-  const { selected } = useMenuContext();
+  const { selected, onChange } = useMenuContext();
 
   return (
     <li>
-      <Link to={to} {...args}>
-        <Button active={selected === to}>{children}</Button>
-      </Link>
+      <Button
+        active={selected === to}
+        onClick={() => {
+          onChange(to);
+        }}
+      >
+        {children}
+      </Button>
     </li>
   );
 };
@@ -46,6 +56,7 @@ export default Menu;
 
 interface MenuContextValue {
   selected: string | null;
+  onChange(value: string): void;
 }
 
 const MenuContext = React.createContext<MenuContextValue | null>(null);

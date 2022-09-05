@@ -1,11 +1,14 @@
-import { useLocation } from "react-router-dom";
 import Menu from "../../template/Menu";
 
-const Filter = () => {
-  const { pathname } = useLocation();
-
+const Filter = ({
+  selected,
+  onChange,
+}: {
+  selected: string | null;
+  onChange(value: string): void;
+}) => {
   return (
-    <Menu selected={pathname}>
+    <Menu selected={selected} onChange={onChange}>
       <Menu.MenuItem to="/discover">Discover</Menu.MenuItem>
       <Menu.MenuItem to="/animation">Animation</Menu.MenuItem>
       <Menu.MenuItem to="/branding">Branding</Menu.MenuItem>
