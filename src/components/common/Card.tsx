@@ -1,45 +1,48 @@
 import styled from "styled-components";
-import View from "../../lib/icons/View";
+
 import Like from "../../lib/icons/Like";
 import LazyLoadImage from "./LazyLoadImage";
+import { Photo } from "../../api/getPhotos";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-
   padding: 10px;
 `;
 
 const Details = styled.div`
   display: flex;
   justify-content: space-between;
+  padding: 3px;
+`;
+
+const StyledLikes = styled.div`
+  display: inline-flex;
+  align-items: center;
 `;
 
 const Title = styled.div``;
 
-interface CardProps {
-  name: string;
-  image: string;
-  likes: number;
-  views: number;
-}
+type CardProps = Photo;
 
-const Card = ({ image, name, likes, views }: CardProps) => {
+const Card = ({ urls, likes, user, tags }: CardProps) => {
+  const srcset = `${urls.thumb} 200w, ${urls.small} 400w, ${urls.regular} 700w`;
   return (
     <Container>
-      <LazyLoadImage src={image} alt={"product-image"} />
+      <LazyLoadImage
+        sizes="(max-width: 501px) 200px,
+            (max-width: 800px) 400px,
+            700px"
+        srcSet={srcset}
+        src={urls.regular}
+        alt={"product-image"}
+      />
       <Details>
-        <Title>{name}</Title>
-        <span>
-          <span>
-            <View />
-            {views}
-          </span>
-          <span>
-            <Like />
-            {likes}
-          </span>
-        </span>
+        <Title>{user.name}</Title>
+        <StyledLikes>
+          <Like width={16} height={16} />
+          {likes}
+        </StyledLikes>
       </Details>
     </Container>
   );

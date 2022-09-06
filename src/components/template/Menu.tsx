@@ -1,4 +1,9 @@
-import React, { HTMLAttributes, ReactNode, useContext } from "react";
+import React, {
+  HTMLAttributes,
+  LiHTMLAttributes,
+  ReactNode,
+  useContext,
+} from "react";
 
 import styled from "styled-components";
 import Button from "../common/Button";
@@ -29,20 +34,20 @@ const Menu = ({ children, selected, onChange, ...args }: MenuProps) => {
   );
 };
 
-interface MenuItemProps {
+interface MenuItemProps extends LiHTMLAttributes<HTMLLIElement> {
   children: ReactNode;
-  to: string;
+  value: string;
 }
 
-const MenuItem = ({ children, to, ...args }: MenuItemProps) => {
+const MenuItem = ({ children, value, ...args }: MenuItemProps) => {
   const { selected, onChange } = useMenuContext();
 
   return (
-    <li>
+    <li {...args}>
       <Button
-        active={selected === to}
+        active={selected === value}
         onClick={() => {
-          onChange(to);
+          onChange(value);
         }}
       >
         {children}

@@ -55,7 +55,7 @@ const LazyLoadImage = ({
 
   return (
     <Placeholder ref={imgRef}>
-      {inView && <Image alt={alt} src={src} />}
+      {inView && <Image alt={alt} src={src} {...args} />}
     </Placeholder>
   );
 };

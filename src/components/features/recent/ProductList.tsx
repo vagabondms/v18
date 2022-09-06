@@ -1,16 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import styled from "styled-components";
-import { Products } from "../../../models/product";
 
 import Card from "../../common/Card";
 
 const Container = styled.ul`
   display: grid;
+  width: 100%;
+
   @media screen and (max-width: 1330px) {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: auto 1fr;
 `;
 
 const ListEnd = styled.div`
@@ -18,14 +20,14 @@ const ListEnd = styled.div`
 `;
 
 const ProductList = ({ resource }: { resource: any }) => {
-  const products = resource.products.read();
+  const { results } = resource.products.read();
 
-  const [productList, setProductList] = useState<Products[]>(products);
+  // const [productList, setProductList] = useState<Products[]>(products);
 
   const endOfList = useRef<HTMLDivElement>(null);
   const io = useRef<IntersectionObserver | null>(null);
 
-  // const ioCallback = useCallback(
+  // const ioCallback = useCallback(i
   //   (entries: IntersectionObserverEntry[]) => {
   //     const [entry] = entries;
 
@@ -48,7 +50,7 @@ const ProductList = ({ resource }: { resource: any }) => {
 
   return (
     <Container>
-      {productList?.map((product: any) => {
+      {results?.map((product: any) => {
         return <Card key={product.id} {...product}></Card>;
       })}
       <ListEnd ref={endOfList} />

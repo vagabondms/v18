@@ -1,15 +1,15 @@
-import "./normalize.css";
+// import "./normalize.css";
 
-import Filter from "./components/features/recent/Filter";
+import CategoryFilter from "./components/features/recent/Tab";
 
-import { Suspense, useCallback, useRef, useState, useTransition } from "react";
-import { getProducts } from "./api/fakeAPI";
+import { Suspense, useRef, useState, useTransition } from "react";
+import { getPhotos } from "./api/getPhotos";
 import ProductList from "./components/features/recent/ProductList";
 
-const initialResource = getProducts({ type: "/discover", offset: 0 });
+const initialResource = getPhotos({ keyword: "discover" });
 
 function App() {
-  const [selected, setSelected] = useState<string>("/discover");
+  const [selected, setSelected] = useState<string>("discover");
   const [resource, setResource] = useState(initialResource);
   const [isPending, startTransition] = useTransition();
 
@@ -19,16 +19,18 @@ function App() {
     setSelected(value);
     offset.current = 0;
     startTransition(() => {
-      setResource(getProducts({ type: value, offset: 0 }));
+      setResource(getPhotos({ keyword: value }));
     });
   };
 
   return (
     <div>
-      <Filter selected={selected} onChange={handleChange} />
-      <Suspense fallback={<div>...loading</div>}>
+      {/* <GlobalLoader /> */}
+      {/* <CategoryFilter selected={selected} onChange={handleChange} /> */}
+      <div>hi</div>
+      {/* <Suspense fallback={<div>...loading</div>}>
         <ProductList resource={resource} />
-      </Suspense>
+      </Suspense> */}
     </div>
   );
 }

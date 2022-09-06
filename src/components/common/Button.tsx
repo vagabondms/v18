@@ -6,24 +6,21 @@ interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
 }
 
 const Button = styled.button<ButtonProps>`
-  padding: 16px 20px;
+  width: 100%;
+  height: 100%;
   border: none;
   cursor: pointer;
 
-  background: rgba(0, 0, 0, 0.5);
   color: #fff;
-  border-radius: 50px;
 
   &:hover {
-    background: #fff;
-    color: black;
+    background: #0057ff;
   }
 
   ${({ active }) =>
     active &&
     css`
-      background: #fff;
-      color: black;
+      background: #0057ff;
     `};
 
   transition: all 0.3s ease-in-out;
