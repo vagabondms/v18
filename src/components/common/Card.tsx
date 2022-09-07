@@ -30,8 +30,8 @@ const Card = ({ urls, likes, user, tags }: CardProps) => {
   return (
     <Container>
       <LazyLoadImage
-        sizes="(max-width: 501px) 200px,
-            (max-width: 800px) 400px,
+        sizes="(max-width: 1000px) 200px,
+            (max-width: 1200px) 400px,
             700px"
         srcSet={srcset}
         src={urls.regular}

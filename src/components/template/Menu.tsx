@@ -1,9 +1,4 @@
-import React, {
-  HTMLAttributes,
-  LiHTMLAttributes,
-  ReactNode,
-  useContext,
-} from "react";
+import React, { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 
 import styled from "styled-components";
 import Button from "../common/Button";
@@ -12,40 +7,25 @@ const StyledMenu = styled.ul`
   display: flex;
 `;
 
-interface MenuProps extends Omit<HTMLAttributes<HTMLUListElement>, "onChange"> {
-  selected: string | null;
-  onChange(value: string): void;
-}
+interface MenuProps extends HTMLAttributes<HTMLUListElement> {}
 
-const Menu = ({ children, selected, onChange, ...args }: MenuProps) => {
-  return (
-    <MenuContext.Provider
-      value={{
-        selected: selected ?? null,
-        onChange: onChange,
-      }}
-    >
-      <StyledMenu {...args}>{children}</StyledMenu>
-    </MenuContext.Provider>
-  );
+const Menu = ({ children, ...args }: MenuProps) => {
+  return <StyledMenu {...args}>{children}</StyledMenu>;
 };
 
-interface MenuItemProps extends LiHTMLAttributes<HTMLLIElement> {
-  children: ReactNode;
-  value: string;
+interface MenuItemProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  selected?: boolean;
 }
 
-const MenuItem = ({ children, value, ...args }: MenuItemProps) => {
-  const { selected, onChange } = useMenuContext();
-
+const MenuItem = ({
+  children,
+  className,
+  selected,
+  ...args
+}: MenuItemProps) => {
   return (
-    <li {...args}>
-      <Button
-        active={selected === value}
-        onClick={() => {
-          onChange(value);
-        }}
-      >
+    <li className={className}>
+      <Button active={selected} {...args}>
         {children}
       </Button>
     </li>
@@ -54,19 +34,3 @@ const MenuItem = ({ children, value, ...args }: MenuItemProps) => {
 
 Menu.MenuItem = MenuItem;
 export default Menu;
-
-interface MenuContextValue {
-  selected: string | null;
-  onChange(value: string): void;
-}
-
-const MenuContext = React.createContext<MenuContextValue | null>(null);
-
-const useMenuContext = () => {
-  const menuContext = useContext(MenuContext);
-  if (!menuContext) {
-    throw Error("err");
-  }
-
-  return menuContext;
-};

@@ -1,5 +1,6 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { getPhotos } from "unsplash-js/dist/methods/search";
 
 import Card from "../../common/Card";
 
@@ -26,7 +27,7 @@ const ProductList = ({ resource }: { resource: any }) => {
   // const [productList, setProductList] = useState<Products[]>(products);
 
   const endOfList = useRef<HTMLDivElement>(null);
-  const io = useRef<IntersectionObserver | null>(null);
+  // const io = useRef<IntersectionObserver | null>(null);
 
   // const ioCallback = useCallback(i
   //   (entries: IntersectionObserverEntry[]) => {

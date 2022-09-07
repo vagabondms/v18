@@ -2,7 +2,7 @@ import { HTMLAttributes } from "react";
 import styled, { css } from "styled-components";
 
 interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
-  active: boolean;
+  active?: boolean;
 }
 
 const Button = styled.button<ButtonProps>`
@@ -14,16 +14,16 @@ const Button = styled.button<ButtonProps>`
   color: #fff;
 
   &:hover {
+    transition: all 0.3s ease-in-out;
     background: #0057ff;
   }
 
   ${({ active }) =>
     active &&
     css`
+      transition: all 0.1s ease-in-out;
       background: #0057ff;
     `};
-
-  transition: all 0.3s ease-in-out;
 `;
 
 export default Button;
