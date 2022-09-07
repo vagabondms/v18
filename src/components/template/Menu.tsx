@@ -10,10 +10,6 @@ import Button from "../common/Button";
 
 const StyledMenu = styled.ul`
   display: flex;
-
-  li {
-    margin: 0 8px;
-  }
 `;
 
 interface MenuProps extends Omit<HTMLAttributes<HTMLUListElement>, "onChange"> {

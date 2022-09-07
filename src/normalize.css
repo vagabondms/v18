@@ -484,8 +484,7 @@ table {
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
-  width: 100%;
+body {
+  font-family: "acumin-pro-wide", "Acumin Pro Wide", "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
 }

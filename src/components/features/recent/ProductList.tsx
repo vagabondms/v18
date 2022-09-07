@@ -6,6 +6,7 @@ import Card from "../../common/Card";
 const Container = styled.ul`
   display: grid;
   width: 100%;
+  padding: 0 24px;
 
   @media screen and (max-width: 1330px) {
     grid-template-columns: repeat(3, minmax(0, 1fr));

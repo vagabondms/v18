@@ -1,10 +1,12 @@
-// import "./normalize.css";
+import "./normalize.css";
 
-import CategoryFilter from "./components/features/recent/Tab";
+import Tab from "./components/features/recent/Tab";
 
 import { Suspense, useRef, useState, useTransition } from "react";
 import { getPhotos } from "./api/getPhotos";
 import ProductList from "./components/features/recent/ProductList";
+import Header from "./components/features/recent/Header";
+import TabDetail from "./components/features/recent/TabDetail";
 
 const initialResource = getPhotos({ keyword: "discover" });
 
@@ -25,12 +27,12 @@ function App() {
 
   return (
     <div>
-      {/* <GlobalLoader /> */}
-      {/* <CategoryFilter selected={selected} onChange={handleChange} /> */}
-      <div>hi</div>
-      {/* <Suspense fallback={<div>...loading</div>}>
+      <Header />
+      <Tab selected={selected} onChange={handleChange} />
+      <TabDetail selected={selected} />
+      <Suspense fallback={<div>...loading</div>}>
         <ProductList resource={resource} />
-      </Suspense> */}
+      </Suspense>
     </div>
   );
 }

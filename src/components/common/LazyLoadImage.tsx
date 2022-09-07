@@ -20,7 +20,7 @@ const Placeholder = styled.div`
   background: rgba(250, 250, 250, 0.788);
   position: relative;
 
-  border-radius: 10px;
+  border-radius: 4px;
 
   overflow: hidden;
 `;

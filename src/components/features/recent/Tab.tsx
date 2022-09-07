@@ -34,6 +34,15 @@ const StyledMenuItem = styled(Menu.MenuItem)`
   text-align: center;
   user-select: none;
   white-space: nowrap;
+
+  margin: 0 8px;
+
+  &:first-child {
+    margin-left: 0;
+  }
+  &:last-child {
+    margin-right: 0;
+  }
 `;
 
 const MenuWrapper = styled.div`
