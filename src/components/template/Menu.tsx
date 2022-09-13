@@ -1,31 +1,65 @@
-import React, { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
-
+import React, { ButtonHTMLAttributes, HTMLAttributes } from "react";
 import styled from "styled-components";
+
 import Button from "../common/Button";
 
 const StyledMenu = styled.ul`
   display: flex;
 `;
 
-interface MenuProps extends HTMLAttributes<HTMLUListElement> {}
+type MenuContextValue = {
+  selected?: string;
+  clickHandler(value: string): void;
+};
 
-const Menu = ({ children, ...args }: MenuProps) => {
-  return <StyledMenu {...args}>{children}</StyledMenu>;
+const MenuContext = React.createContext<MenuContextValue | null>(null);
+
+interface MenuProps extends Omit<HTMLAttributes<HTMLUListElement>, "onChange"> {
+  selected?: string;
+  onChange(value: string): void;
+}
+
+const Menu = ({ children, selected, onChange, ...args }: MenuProps) => {
+  const clickHandler = (value: string) => {
+    onChange(value);
+  };
+
+  return (
+    <MenuContext.Provider
+      value={{
+        selected,
+        clickHandler,
+      }}
+    >
+      <StyledMenu {...args}>{children}</StyledMenu>
+    </MenuContext.Provider>
+  );
 };
 
 interface MenuItemProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   selected?: boolean;
+  value: string;
 }
 
-const MenuItem = ({
-  children,
-  className,
-  selected,
-  ...args
-}: MenuItemProps) => {
+const MenuItem = ({ children, value, className, ...args }: MenuItemProps) => {
+  const menuContext = React.useContext(MenuContext);
+
+  if (!menuContext) {
+    throw new Error();
+  }
+
+  const { selected, clickHandler } = menuContext;
+
+  const isItemSelected = selected === value;
+
   return (
     <li className={className}>
-      <Button active={selected} {...args}>
+      <Button
+        disabled={isItemSelected}
+        active={isItemSelected}
+        onClick={() => clickHandler(value)}
+        {...args}
+      >
         {children}
       </Button>
     </li>

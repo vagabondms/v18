@@ -1,8 +1,8 @@
 import styled from "styled-components";
+import { Photos } from "unsplash-js/dist/methods/search/types/response";
 
 import Like from "../../lib/icons/Like";
 import LazyLoadImage from "./LazyLoadImage";
-import { Photo } from "../../api/getPhotos";
 
 const Container = styled.div`
   display: flex;
@@ -23,9 +23,11 @@ const StyledLikes = styled.div`
 
 const Title = styled.div``;
 
-type CardProps = Photo;
+type CardProps = {
+  photo: Photos["results"][number];
+};
 
-const Card = ({ urls, likes, user, tags }: CardProps) => {
+const Card = ({ photo: { urls, color, user, likes } }: CardProps) => {
   const srcset = `${urls.thumb} 200w, ${urls.small} 400w, ${urls.regular} 700w`;
   return (
     <Container>
@@ -36,6 +38,7 @@ const Card = ({ urls, likes, user, tags }: CardProps) => {
         srcSet={srcset}
         src={urls.regular}
         alt={"product-image"}
+        placeholderColor={color ?? "grey"}
       />
       <Details>
         <Title>{user.name}</Title>

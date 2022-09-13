@@ -2,7 +2,7 @@ import "./normalize.css";
 
 import Tab from "./components/features/recent/Tab";
 
-import { Suspense, useRef, useState, useTransition } from "react";
+import { Suspense, useState, useTransition } from "react";
 import { getPhotos } from "./api/getPhotos";
 import ProductList from "./components/features/recent/ProductList";
 import Header from "./components/features/recent/Header";
@@ -16,11 +16,11 @@ function App() {
   const [resource, setResource] = useState(initialResource);
   const [isPending, startTransition] = useTransition();
 
-  const offset = useRef(0);
-
   const handleChange = (value: string) => {
+    // startTransition(() => {
     setSelected(value);
-    offset.current = 0;
+    // });
+
     startTransition(() => {
       setResource(getPhotos({ keyword: value }));
     });

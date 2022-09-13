@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import { useCallback, useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 import Arrow from "../../../lib/icons/Arrow";
 import Menu from "../../template/Menu";
 
@@ -82,10 +82,9 @@ const StyledMenu = styled(Menu)`
 `;
 
 const StyledMenuItem = styled(Menu.MenuItem)<{ $transform: number }>`
-  -webkit-box-align: center;
+  display: inline-flex;
   align-items: center;
   border-radius: 3px;
-  display: inline-flex;
   justify-content: center;
   min-height: 65px;
   min-width: 150px;
@@ -94,7 +93,6 @@ const StyledMenuItem = styled(Menu.MenuItem)<{ $transform: number }>`
   text-align: center;
   user-select: none;
   white-space: nowrap;
-
   margin: 0 8px;
 
   &:first-child {
@@ -103,6 +101,7 @@ const StyledMenuItem = styled(Menu.MenuItem)<{ $transform: number }>`
   &:last-child {
     margin-right: 0;
   }
+
   ${({ $transform }) => {
     return $transform !== 0
       ? `
@@ -123,47 +122,32 @@ const CategoryFilter = ({
   selected,
   onChange,
 }: {
-  selected: string | null;
+  selected: string;
   onChange(value: string): void;
 }) => {
-  /*.map((listItem, index, array) => {
-    return {
-      ...listItem,
-      prev: array[index - 1] ?? array[array.length - 1],
-      next: array[index + 1] ?? array[0],
-    };
-  });
-  */
-
-  const [menuList, setMenuList] = useState(MenuList);
-
-  /*
-    selected 값에 따라 tab 위치가 변경됨.
-    transform 거리도 변경되어야함.
-   */
-
-  /**
-   * diff를 받아서 이동하고 selectedItem을 지정해주는 함수
-   */
-  const moveTab = (diff: number) => {
-    setMenuList((prev) => {
-      if (diff > 0) {
-        const left = prev.slice(diff);
-        const right = prev.slice(0, diff);
-        return [...left, ...right];
-      } else if (diff < 0) {
-        const left = prev.slice(diff);
-        const right = prev.slice(0, diff);
-        return [...left, ...right];
-      }
-      return prev;
-    });
-  };
+  const { menuList, adjustList, findIndex } = useMenuList(MenuList);
 
   const [transform, setTransform] = useState(0);
 
+  const prevSelected = useRef(selected);
+
   useEffect(() => {
-    transform !== 0 && setTransform(0);
+    if (prevSelected.current !== selected) {
+      const currentIdx = findIndex(selected);
+      const prevIdx = findIndex(prevSelected.current);
+
+      const diff = currentIdx - prevIdx;
+
+      prevSelected.current = selected;
+
+      setTransform(diff * 100);
+      adjustList(diff);
+    }
+  }, [selected, menuList, adjustList, findIndex]);
+
+  useEffect(() => {
+    // TODO Transform 제대로
+    transform !== 0 && setTimeout(() => setTransform(0), 0);
   }, [transform]);
 
   return (
@@ -171,9 +155,8 @@ const CategoryFilter = ({
       <ArrowButton
         className="arrow-button_left"
         onClick={() => {
-          moveTab(-1);
-          setTransform(-100);
-          onChange(menuList[Math.floor(menuList.length / 2) - 1]);
+          const currentIdx = findIndex(selected);
+          onChange(menuList[currentIdx - 1]);
         }}
       >
         <Arrow className="arrow-icon" />
@@ -181,31 +164,17 @@ const CategoryFilter = ({
       <ArrowButton
         className="arrow-button_right"
         onClick={() => {
-          moveTab(1);
-          setTransform(+100);
-          onChange(menuList[Math.floor(menuList.length / 2) + 1]);
+          const currentIdx = findIndex(selected);
+          onChange(menuList[currentIdx + 1]);
         }}
       >
         <Arrow className="arrow-icon" />
       </ArrowButton>
       <Window>
-        <StyledMenu className="items">
-          {menuList.map((listItem, index) => {
+        <StyledMenu selected={selected} onChange={onChange}>
+          {menuList.map((listItem) => {
             return (
-              <StyledMenuItem
-                $transform={transform}
-                selected={listItem === selected}
-                onClick={() => {
-                  const currentIdx = menuList.findIndex(
-                    (listItem) => listItem === selected
-                  );
-                  const diff: number = index - currentIdx;
-                  setTransform(diff * 100);
-                  moveTab(diff);
-                  onChange(listItem);
-                }}
-                className={`menu-item`}
-              >
+              <StyledMenuItem value={listItem} $transform={transform}>
                 {listItem}
               </StyledMenuItem>
             );
@@ -217,3 +186,29 @@ const CategoryFilter = ({
 };
 
 export default CategoryFilter;
+
+const useMenuList = <T,>(initialList: T[]) => {
+  const [menuList, setMenuList] = useState(initialList);
+
+  const adjustList = useCallback((diff: number) => {
+    setMenuList((prev) => {
+      const left = prev.slice(diff);
+      const right = prev.slice(0, diff);
+      return [...left, ...right];
+    });
+  }, []);
+
+  const findIndex = useCallback(
+    (value: T) => {
+      // 범용적으로 사용하려면 T에 대한 타입이 정확하게 이루어져야함. (reference 타입일 경우 찾지 못함)
+      return menuList.findIndex((listItem) => listItem === value);
+    },
+    [menuList]
+  );
+
+  return {
+    menuList,
+    adjustList,
+    findIndex,
+  };
+};
