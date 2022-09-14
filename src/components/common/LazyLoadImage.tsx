@@ -33,7 +33,7 @@ const LazyLoadImage = ({ placeholderColor, ...args }: LazyLoadImageProps) => {
 
   return (
     <Placeholder ref={placeholderRef} $backgroundColor={placeholderColor}>
-      {inView && <Image {...args} />}
+      {inView && <Image loading="lazy" {...args} />}
     </Placeholder>
   );
 };

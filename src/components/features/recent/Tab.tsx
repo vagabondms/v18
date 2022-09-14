@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import styled from "styled-components";
 import Arrow from "../../../lib/icons/Arrow";
 import Menu from "../../template/Menu";
 
 const MenuList = [
+  "Creative Challenges",
+  "LightRoom",
   "Illustrator",
   "InDesign",
   "XD",
@@ -15,10 +18,6 @@ const MenuList = [
   "Stock",
   "Dimension",
   "Capture",
-  "Substance 3D Designer",
-  "Substance 3D Painter",
-  "Substance 3D Sampler",
-  "Substance 3D Stager",
   "Fresco",
   "Aero",
   "Best of Behance",
@@ -37,13 +36,12 @@ const MenuList = [
   "Game Design",
   "Sound",
   "Photoshop",
-  "Creative Challenges",
-  "LightRoom",
 ];
 
 const MenuWrapper = styled.div`
   width: 100%;
   position: relative;
+  overflow: hidden;
 `;
 
 const ArrowButton = styled.button`
@@ -81,7 +79,7 @@ const StyledMenu = styled(Menu)`
   justify-content: center;
 `;
 
-const StyledMenuItem = styled(Menu.MenuItem)<{ $transform: number }>`
+const StyledMenuItem = styled(Menu.MenuItem)<{ $transform?: number }>`
   display: inline-flex;
   align-items: center;
   border-radius: 3px;
@@ -113,12 +111,7 @@ const StyledMenuItem = styled(Menu.MenuItem)<{ $transform: number }>`
   }}
 `;
 
-const Window = styled.div`
-  width: 100%;
-  overflow: hidden;
-`;
-
-const CategoryFilter = ({
+const Tab = ({
   selected,
   onChange,
 }: {
@@ -140,14 +133,14 @@ const CategoryFilter = ({
 
       prevSelected.current = selected;
 
-      setTransform(diff * 100);
+      flushSync(() => setTransform(diff * 100));
       adjustList(diff);
     }
   }, [selected, menuList, adjustList, findIndex]);
 
   useEffect(() => {
     // TODO Transform 제대로
-    transform !== 0 && setTimeout(() => setTransform(0), 0);
+    transform !== 0 && setTransform(0);
   }, [transform]);
 
   return (
@@ -170,22 +163,25 @@ const CategoryFilter = ({
       >
         <Arrow className="arrow-icon" />
       </ArrowButton>
-      <Window>
-        <StyledMenu selected={selected} onChange={onChange}>
-          {menuList.map((listItem) => {
-            return (
-              <StyledMenuItem value={listItem} $transform={transform}>
-                {listItem}
-              </StyledMenuItem>
-            );
-          })}
-        </StyledMenu>
-      </Window>
+
+      <StyledMenu selected={selected} onChange={onChange}>
+        {menuList.map((listItem) => {
+          return (
+            <StyledMenuItem
+              key={listItem}
+              value={listItem}
+              $transform={transform}
+            >
+              {listItem}
+            </StyledMenuItem>
+          );
+        })}
+      </StyledMenu>
     </MenuWrapper>
   );
 };
 
-export default CategoryFilter;
+export default Tab;
 
 const useMenuList = <T,>(initialList: T[]) => {
   const [menuList, setMenuList] = useState(initialList);

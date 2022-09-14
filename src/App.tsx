@@ -16,14 +16,27 @@ function App() {
   const [resource, setResource] = useState(initialResource);
   const [isPending, startTransition] = useTransition();
 
+  // const queue = useRef<string[]>([]);
+  // const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleChange = (value: string) => {
-    // startTransition(() => {
     setSelected(value);
-    // });
 
     startTransition(() => {
       setResource(getPhotos({ keyword: value }));
     });
+
+    // queue.current.push(value);
+    // timeout.current && clearTimeout(timeout.current);
+    // timeout.current = setTimeout(() => {
+    //   const value = queue.current.pop();
+    //   queue.current = [];
+    //   if (value) {
+    //     startTransition(() => {
+    //       setResource(getPhotos({ keyword: value }));
+    //     });
+    //   }
+    // }, 300);
   };
 
   return (
